@@ -1,0 +1,11 @@
+{
+  "name": "aurora-dsql-setup",
+  "version": "1.0.0",
+  "scripts": {
+    "setup": "node setup-database.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dsql": "^3.0.0",
+    "@aws-sdk/credential-providers": "^3.0.0"
+  }
+}
