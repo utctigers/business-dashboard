@@ -1,5 +1,5 @@
 node_modules/
-.angular/
+.angular/cache/
 dist/
 tmp/
 out-tsc/
