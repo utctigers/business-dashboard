@@ -2,6 +2,7 @@ export const environment = {
   production: false,
   useMockData: false, // Use backend API
   apiUrl: 'http://localhost:3001/api',
+  showAnalytics: false, // Toggle analytics tab visibility
   aurora: {
     clusterId: '4vthvxld47txd4lmgqpjzagqki',
     endpoint: '4vthvxld47txd4lmgqpjzagqki.dsql.us-east-1.on.aws',

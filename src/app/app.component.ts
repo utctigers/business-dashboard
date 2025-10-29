@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { environment } from '../environments/environment';
+import { ChatbotComponent } from './chatbot/chatbot.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, ChatbotComponent],
   template: `
     <div class="app-container">
       <header class="header">
@@ -19,7 +21,8 @@ import { CommonModule } from '@angular/common';
             <a routerLink="/employees" routerLinkActive="active" class="nav-link">Employees</a>
             <a routerLink="/timesheets" routerLinkActive="active" class="nav-link">Timesheets</a>
             <a routerLink="/inventory" routerLinkActive="active" class="nav-link">Inventory</a>
-            <a routerLink="/analytics" routerLinkActive="active" class="nav-link">Analytics</a>
+            <a routerLink="/calendar" routerLinkActive="active" class="nav-link">Calendar</a>
+            <a *ngIf="showAnalytics" routerLink="/analytics" routerLinkActive="active" class="nav-link">Analytics</a>
           </nav>
         </div>
       </header>
@@ -27,6 +30,8 @@ import { CommonModule } from '@angular/common';
       <main class="main-content">
         <router-outlet></router-outlet>
       </main>
+      
+      <app-chatbot></app-chatbot>
     </div>
   `,
   styles: [`
@@ -88,4 +93,6 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class AppComponent {}
+export class AppComponent {
+  showAnalytics = environment.showAnalytics;
+}

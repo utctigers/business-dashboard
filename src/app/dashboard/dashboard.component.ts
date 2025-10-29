@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { EmployeeService } from '../employee.service';
+import { RouterLink, Router } from '@angular/router';
+import { EmployeeService } from '../service/employee.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="dashboard">
-      <h1>Business Overview</h1>
+    <div id="dashboard" class="dashboard">
+      <h1 id="dashboardTitle">Business Overview</h1>
       
-      <div class="metrics-grid">
-        <div class="metric-card" *ngFor="let metric of metrics" [routerLink]="metric.link" [class.clickable]="metric.link">
+      <div id="metricsGrid" class="metrics-grid">
+        <div id="metricCard{{ i }}" class="metric-card" *ngFor="let metric of metrics; let i = index" [routerLink]="metric.link" [class.clickable]="metric.link">
           <div class="metric-icon">{{ metric.icon }}</div>
           <div class="metric-content">
             <h3>{{ metric.value }}</h3>
@@ -22,10 +22,10 @@ import { EmployeeService } from '../employee.service';
         </div>
       </div>
       
-      <div class="dashboard-grid">
-        <div class="card">
-          <h3>Recent Activity</h3>
-          <div class="activity-list">
+      <div id="dashboardGrid" class="dashboard-grid">
+        <div id="recentActivityCard" class="card">
+          <h3 id="recentActivityTitle">Recent Activity</h3>
+          <div id="activityList" class="activity-list">
             <div class="activity-item" *ngFor="let activity of recentActivity">
               <span class="activity-icon">{{ activity.icon }}</span>
               <div class="activity-content">
@@ -36,10 +36,10 @@ import { EmployeeService } from '../employee.service';
           </div>
         </div>
         
-        <div class="card">
-          <h3>Quick Actions</h3>
-          <div class="actions-grid">
-            <button class="action-btn" *ngFor="let action of quickActions">
+        <div id="quickActionsCard" class="card">
+          <h3 id="quickActionsTitle">Quick Actions</h3>
+          <div id="actionsGrid" class="actions-grid">
+            <button id="quickAction{{ i }}" class="action-btn" *ngFor="let action of quickActions; let i = index" (click)="navigateToAction(action.route)">
               <span class="action-icon">{{ action.icon }}</span>
               <span>{{ action.label }}</span>
             </button>
@@ -171,7 +171,7 @@ import { EmployeeService } from '../employee.service';
   `]
 })
 export class DashboardComponent implements OnInit {
-  constructor(private employeeService: EmployeeService) {}
+  constructor(private employeeService: EmployeeService, private router: Router) {}
 
   ngOnInit() {
     this.updateEmployeeCount();
@@ -200,9 +200,13 @@ export class DashboardComponent implements OnInit {
   ];
   
   quickActions = [
-    { icon: '➕', label: 'Add Employee' },
-    { icon: '📋', label: 'Generate Report' },
-    { icon: '📦', label: 'Update Inventory' },
-    { icon: '⚙️', label: 'System Settings' }
+    { icon: '➕', label: 'Add Employee', route: '/employees' },
+    { icon: '📋', label: 'Generate Report', route: '/analytics' },
+    { icon: '📦', label: 'Update Inventory', route: '/inventory' },
+    { icon: '⚙️', label: 'System Settings', route: '/dashboard' }
   ];
+
+  navigateToAction(route: string) {
+    this.router.navigate([route]);
+  }
 }

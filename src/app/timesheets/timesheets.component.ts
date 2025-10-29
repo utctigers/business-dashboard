@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DatabaseService } from '../database.service';
+import { DatabaseService } from '../service/database.service';
 import * as XLSX from 'xlsx';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-timesheets',
@@ -27,6 +28,11 @@ import * as XLSX from 'xlsx';
           <option value="">All Employees</option>
           <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
         </select>
+      </div>
+      
+      <div class="map-container">
+        <h3>Employee Locations</h3>
+        <div id="map" style="height: 400px; width: 100%; margin-bottom: 2rem;"></div>
       </div>
       
       <div class="timesheet-table">
@@ -164,9 +170,11 @@ import * as XLSX from 'xlsx';
     .time-summary { margin-bottom: 1rem; }
     .view-table { width: 100%; }
     .view-table th, .view-table td { padding: 0.5rem; border-bottom: 1px solid #eee; }
+    .map-container { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .map-container h3 { margin: 0 0 1rem 0; color: #2d3748; }
   `]
 })
-export class TimesheetsComponent implements OnInit {
+export class TimesheetsComponent implements OnInit, AfterViewInit {
   timesheets: any[] = [];
   filteredTimesheets: any[] = [];
   employees: any[] = [];
@@ -188,11 +196,41 @@ export class TimesheetsComponent implements OnInit {
     status: ''
   };
 
+  private map: any;
+  private employeeLocations = [
+    { id: 1, name: 'John Smith', lat: 40.7128, lng: -74.0060, status: 'logged-in' },
+    { id: 2, name: 'Sarah Johnson', lat: 40.7589, lng: -73.9851, status: 'logged-out' },
+    { id: 3, name: 'Mike Davis', lat: 40.7505, lng: -73.9934, status: 'logged-in' },
+    { id: 4, name: 'Emily Brown', lat: 40.7282, lng: -73.7949, status: 'logged-in' }
+  ];
+
   constructor(private db: DatabaseService) {}
 
   ngOnInit() {
     this.loadTimesheets();
     this.loadEmployees();
+  }
+
+  ngAfterViewInit() {
+    this.initMap();
+  }
+
+  private initMap() {
+    this.map = L.map('map').setView([40.7128, -74.0060], 11);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+    
+    this.employeeLocations.forEach(emp => {
+      const color = emp.status === 'logged-in' ? 'green' : 'red';
+      const marker = L.circleMarker([emp.lat, emp.lng], {
+        color: color,
+        fillColor: color,
+        fillOpacity: 0.7,
+        radius: 8
+      }).addTo(this.map);
+      
+      marker.bindPopup(`<b>${emp.name}</b><br>Status: ${emp.status}`);
+    });
   }
 
   async loadTimesheets() {

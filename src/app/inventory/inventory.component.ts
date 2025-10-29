@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InventoryService } from '../inventory.service';
+import { InventoryService } from '../service/inventory.service';
 
 @Component({
   selector: 'app-inventory',
@@ -12,7 +12,15 @@ import { InventoryService } from '../inventory.service';
         <h1>Inventory Management</h1>
         <div class="header-actions">
           <button class="btn-secondary" (click)="openAddForm()">Add Item</button>
-          <button class="btn-primary">Generate Report</button>
+          <div class="report-dropdown">
+            <button class="btn-primary" (click)="toggleReportDropdown()">Generate Report ▼</button>
+            <div class="dropdown-menu" *ngIf="showReportDropdown">
+              <button (click)="generateExpenseReport('weekly')">Weekly Report</button>
+              <button (click)="generateExpenseReport('monthly')">Monthly Report</button>
+              <button (click)="generateExpenseReport('quarterly')">Quarterly Report</button>
+              <button (click)="generateExpenseReport('yearly')">Yearly Report</button>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -77,23 +85,44 @@ import { InventoryService } from '../inventory.service';
           <button class="close" (click)="showForm = false">&times;</button>
         </div>
         <div class="modal-body">
-          <input type="text" [value]="currentItem.name" (input)="currentItem.name = $any($event.target).value" placeholder="Name">
-          <input type="text" [value]="currentItem.sku" (input)="currentItem.sku = $any($event.target).value" placeholder="SKU">
-          <select [value]="currentItem.category" (change)="currentItem.category = $any($event.target).value">
-            <option value="">Category</option>
-            <option value="Furniture">Furniture</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Supplies">Supplies</option>
-            <option value="Food">Food</option>
-          </select>
-          <input type="number" [value]="currentItem.stock" (input)="currentItem.stock = +$any($event.target).value" placeholder="Stock">
-          <input type="number" [value]="currentItem.min_stock" (input)="currentItem.min_stock = +$any($event.target).value" placeholder="Min Stock">
-          <input type="number" [value]="currentItem.max_stock" (input)="currentItem.max_stock = +$any($event.target).value" placeholder="Max Stock">
-          <input type="number" [value]="currentItem.price" (input)="currentItem.price = +$any($event.target).value" placeholder="Price" step="0.01">
+          <div class="form-group">
+            <label for="itemName">Item Name</label>
+            <input id="itemName" type="text" [value]="currentItem.name" (input)="currentItem.name = $any($event.target).value">
+          </div>
+          <div class="form-group">
+            <label for="itemSku">SKU</label>
+            <input id="itemSku" type="text" [value]="currentItem.sku" (input)="currentItem.sku = $any($event.target).value">
+          </div>
+          <div class="form-group">
+            <label for="itemCategory">Category</label>
+            <select id="itemCategory" [value]="currentItem.category" (change)="currentItem.category = $any($event.target).value">
+              <option value="">Select Category</option>
+              <option value="Furniture">Furniture</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Supplies">Supplies</option>
+              <option value="Food">Food</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="itemStock">Current Stock</label>
+            <input id="itemStock" type="number" [value]="currentItem.stock" (input)="currentItem.stock = +$any($event.target).value">
+          </div>
+          <div class="form-group">
+            <label for="itemMinStock">Minimum Stock Level</label>
+            <input id="itemMinStock" type="number" [value]="currentItem.min_stock" (input)="currentItem.min_stock = +$any($event.target).value">
+          </div>
+          <div class="form-group">
+            <label for="itemMaxStock">Maximum Stock Level</label>
+            <input id="itemMaxStock" type="number" [value]="currentItem.max_stock" (input)="currentItem.max_stock = +$any($event.target).value">
+          </div>
+          <div class="form-group">
+            <label for="itemPrice">Price ($)</label>
+            <input id="itemPrice" type="number" [value]="currentItem.price" (input)="currentItem.price = +$any($event.target).value" step="0.01">
+          </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-primary" (click)="saveItem()">{{ isEditing ? 'Update' : 'Add' }}</button>
-          <button class="btn-secondary" (click)="showForm = false">Cancel</button>
+          <button id="saveItemBtn" class="btn-primary" (click)="saveItem()">{{ isEditing ? 'Update' : 'Add' }}</button>
+          <button id="cancelItemBtn" class="btn-secondary" (click)="showForm = false">Cancel</button>
         </div>
       </div>
     </div>
@@ -130,9 +159,16 @@ import { InventoryService } from '../inventory.service';
     .modal-header h4 { margin: 0; }
     .close { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
     .modal-body { padding: 1rem; }
-    .modal-body input, .modal-body select { width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 4px; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #2d3748; }
+    .modal-body input, .modal-body select { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.875rem; }
+    .modal-body input:focus, .modal-body select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
     .modal-footer { padding: 1rem; border-top: 1px solid #eee; text-align: right; }
     .modal-footer button { margin-left: 0.5rem; }
+    .report-dropdown { position: relative; }
+    .dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; min-width: 150px; }
+    .dropdown-menu button { display: block; width: 100%; padding: 0.75rem 1rem; border: none; background: none; text-align: left; cursor: pointer; font-size: 0.875rem; }
+    .dropdown-menu button:hover { background: #f8f9fa; }
   `]
 })
 export class InventoryComponent implements OnInit {
@@ -140,6 +176,7 @@ export class InventoryComponent implements OnInit {
   inventoryStats: any[] = [];
   showForm = false;
   isEditing = false;
+  showReportDropdown = false;
   currentItem: any = {
     id: null,
     name: '',
@@ -235,5 +272,79 @@ export class InventoryComponent implements OnInit {
       max_stock: 0,
       price: 0
     };
+  }
+
+  toggleReportDropdown() {
+    this.showReportDropdown = !this.showReportDropdown;
+  }
+
+  generateExpenseReport(period: 'weekly' | 'monthly' | 'quarterly' | 'yearly') {
+    this.showReportDropdown = false;
+    const reportData = this.generateReportData(period);
+    this.downloadReport(reportData, period);
+  }
+
+  private generateReportData(period: string) {
+    const now = new Date();
+    const totalValue = this.inventoryService.getTotalValue();
+    const lowStockItems = this.inventoryItems.filter(item => item.stock <= item.min_stock);
+    
+    return {
+      period: period.charAt(0).toUpperCase() + period.slice(1),
+      generatedDate: now.toLocaleDateString(),
+      totalItems: this.inventoryItems.length,
+      totalValue: totalValue,
+      lowStockItems: lowStockItems.length,
+      categories: this.getCategoryBreakdown(),
+      items: this.inventoryItems
+    };
+  }
+
+  private getCategoryBreakdown() {
+    const breakdown: any = {};
+    this.inventoryItems.forEach(item => {
+      if (!breakdown[item.category]) {
+        breakdown[item.category] = { count: 0, value: 0 };
+      }
+      breakdown[item.category].count++;
+      breakdown[item.category].value += item.price * item.stock;
+    });
+    return breakdown;
+  }
+
+  private downloadReport(data: any, period: string) {
+    const csvContent = this.generateCSV(data);
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `inventory-expense-report-${period}-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  private generateCSV(data: any): string {
+    let csv = `Inventory Expense Report - ${data.period}\n`;
+    csv += `Generated: ${data.generatedDate}\n\n`;
+    csv += `Summary\n`;
+    csv += `Total Items,${data.totalItems}\n`;
+    csv += `Total Value,$${data.totalValue.toLocaleString()}\n`;
+    csv += `Low Stock Items,${data.lowStockItems}\n\n`;
+    
+    csv += `Category Breakdown\n`;
+    csv += `Category,Item Count,Total Value\n`;
+    Object.entries(data.categories).forEach(([category, info]: [string, any]) => {
+      csv += `${category},${info.count},$${info.value.toLocaleString()}\n`;
+    });
+    
+    csv += `\nDetailed Inventory\n`;
+    csv += `Item Name,SKU,Category,Stock,Min Stock,Max Stock,Unit Price,Total Value,Status\n`;
+    data.items.forEach((item: any) => {
+      const status = this.getStatusText(item.stock, item.min_stock);
+      const totalValue = item.price * item.stock;
+      csv += `${item.name},${item.sku},${item.category},${item.stock},${item.min_stock},${item.max_stock},$${item.price},$${totalValue.toLocaleString()},${status}\n`;
+    });
+    
+    return csv;
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EmployeeService } from '../employee.service';
+import { EmployeeService } from '../service/employee.service';
 
 @Component({
   selector: 'app-employees',
@@ -19,15 +19,15 @@ import { EmployeeService } from '../employee.service';
         <h3>{{ editMode ? 'Edit Employee' : 'Add New Employee' }}</h3>
         <div>
           <div class="form-row">
-            <input [value]="newEmployee.name" (input)="newEmployee.name = $any($event.target).value" placeholder="Full Name">
-            <input [value]="newEmployee.email" (input)="newEmployee.email = $any($event.target).value" type="email" placeholder="Email">
+            <input id="employeeName" [value]="newEmployee.name" (input)="newEmployee.name = $any($event.target).value" placeholder="Full Name">
+            <input id="employeeEmail" [value]="newEmployee.email" (input)="newEmployee.email = $any($event.target).value" type="email" placeholder="Email">
           </div>
           <div class="form-row">
-            <input [value]="newEmployee.phone" (input)="newEmployee.phone = $any($event.target).value" placeholder="Phone Number">
-            <input [value]="newEmployee.salary" (input)="newEmployee.salary = $any($event.target).value" type="number" placeholder="Annual Salary">
+            <input id="employeePhone" [value]="newEmployee.phone" (input)="newEmployee.phone = $any($event.target).value" placeholder="Phone Number">
+            <input id="employeeSalary" [value]="newEmployee.salary" (input)="newEmployee.salary = $any($event.target).value" type="number" placeholder="Annual Salary">
           </div>
           <div class="form-row">
-            <select [value]="newEmployee.department" (change)="newEmployee.department = $any($event.target).value">
+            <select id="employeeDepartment" [value]="newEmployee.department" (change)="newEmployee.department = $any($event.target).value">
               <option value="">Select Department</option>
               <option value="Engineering">Engineering</option>
               <option value="Marketing">Marketing</option>
@@ -35,7 +35,7 @@ import { EmployeeService } from '../employee.service';
               <option value="HR">HR</option>
               <option value="Finance">Finance</option>
             </select>
-            <select [value]="newEmployee.role" (change)="newEmployee.role = $any($event.target).value">
+            <select id="employeeRole" [value]="newEmployee.role" (change)="newEmployee.role = $any($event.target).value">
               <option value="">Select Role</option>
               <option value="Manager">Manager</option>
               <option value="Senior">Senior</option>
@@ -44,8 +44,8 @@ import { EmployeeService } from '../employee.service';
             </select>
           </div>
           <div class="form-row">
-            <input [value]="newEmployee.startDate" (input)="newEmployee.startDate = $any($event.target).value" type="date">
-            <select [value]="newEmployee.status" (change)="newEmployee.status = $any($event.target).value">
+            <input id="employeeStartDate" [value]="newEmployee.startDate" (input)="newEmployee.startDate = $any($event.target).value" type="date">
+            <select id="employeeStatus" [value]="newEmployee.status" (change)="newEmployee.status = $any($event.target).value">
               <option value="Active">Active</option>
               <option value="On Leave">On Leave</option>
               <option value="Inactive">Inactive</option>
