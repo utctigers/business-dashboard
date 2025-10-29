@@ -1,3 +1,5 @@
+# THIS REPO IS TO ILLUSTRATE E2E UI AUTOMATION FOR PLAYWRIGHT, TESTING CHROME, FIREFOX AND WEBKIT - FOLLOWING THE POM (PAGE OBJECT MODEL) DESIGN PATTEN:
+
 # Business Dashboard - Demori AI Example
 
 A comprehensive Angular business dashboard application that demonstrates the capabilities of AI-powered chatbot actions for small businesses.
